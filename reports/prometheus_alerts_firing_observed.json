@@ -1,0 +1,18 @@
+{
+  "source": "GET http://localhost:9090/api/v1/alerts",
+  "captured_from_observed_tool_output": true,
+  "alert": {
+    "labels": {
+      "alertname": "LLMCostBurnRateHigh",
+      "severity": "warning"
+    },
+    "annotations": {
+      "description": "Current spend rate: $2.46/hour",
+      "summary": "LLM cost is above $2/hour"
+    },
+    "state": "firing",
+    "activeAt": "2026-11-25T10:32:32.571501534Z",
+    "value": "2.456278111239896"
+  },
+  "note": "A later API query returned no active alerts. This alert was not confirmed as caused by the MOCK_ERROR_RATE=0.2 experiment."
+}
