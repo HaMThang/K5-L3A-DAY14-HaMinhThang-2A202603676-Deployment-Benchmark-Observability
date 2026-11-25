@@ -1,163 +1,323 @@
 ﻿{
-    "query_window_utc":  "2026-11-25T10:20:00Z/2026-11-25T10:45:00Z",
+    "query_window_utc":  "2026-11-25T14:58:00Z/2026-11-25T15:10:00Z",
     "traces_returned":  100,
     "slowest":  [
                     {
-                        "trace_id":  "4dfaabb6c6d23580d8fa806d24df09f8",
+                        "trace_id":  "a378833fd9a83526fc832472850b8b12",
                         "root":  "POST /ask",
-                        "duration_ms":  1720.43,
+                        "duration_ms":  1717.12,
                         "spans":  [
                                       {
                                           "name":  "agent.retrieve_context",
-                                          "duration_ms":  26.31,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  24.77,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "chat mock-llm-small",
-                                          "duration_ms":  1692.22,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1691.09,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "agent.run",
-                                          "duration_ms":  1718.73,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1715.98,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "POST /ask",
-                                          "duration_ms":  1720.43,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1717.12,
+                                          "exception":  false,
+                                          "status":  null
                                       }
                                   ],
                         "error":  false
                     },
                     {
-                        "trace_id":  "cdd51ae512ee4521f3718fdbe1b78a67",
+                        "trace_id":  "3698818d33bd16c026ee6554fb71a5b0",
                         "root":  "POST /ask",
-                        "duration_ms":  1671.64,
+                        "duration_ms":  1703.09,
                         "spans":  [
                                       {
                                           "name":  "agent.retrieve_context",
-                                          "duration_ms":  24.31,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  22.4,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "chat mock-llm-small",
-                                          "duration_ms":  1645.25,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1678.59,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "agent.run",
-                                          "duration_ms":  1669.71,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1701.22,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "POST /ask",
-                                          "duration_ms":  1671.64,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  1703.09,
+                                          "exception":  false,
+                                          "status":  null
                                       }
                                   ],
                         "error":  false
                     },
                     {
-                        "trace_id":  "b0292c6bea78f40d00f9b30d028b7092",
+                        "trace_id":  "a799ec90631dc2ce7b94d2123278d6a7",
                         "root":  "POST /ask",
-                        "duration_ms":  1666.34,
+                        "duration_ms":  224.33,
                         "spans":  [
                                       {
                                           "name":  "agent.retrieve_context",
-                                          "duration_ms":  20.23,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  25.01,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "chat mock-llm-small",
-                                          "duration_ms":  1644.11,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  186.82,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "agent.run",
-                                          "duration_ms":  1664.71,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  212.03,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "POST /ask",
-                                          "duration_ms":  1666.34,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  224.33,
+                                          "exception":  false,
+                                          "status":  null
                                       }
                                   ],
                         "error":  false
                     },
                     {
-                        "trace_id":  "3df1be5e7e95afb0426cebb28e7f5510",
+                        "trace_id":  "d419e4c6f937f0d31a2d6580482bb6ce",
                         "root":  "POST /ask",
-                        "duration_ms":  868.41,
+                        "duration_ms":  220.95,
                         "spans":  [
                                       {
                                           "name":  "agent.retrieve_context",
-                                          "duration_ms":  22.34,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  25.04,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "chat mock-llm-small",
-                                          "duration_ms":  844.27,
-                                          "status":  2,
-                                          "exception":  true
+                                          "duration_ms":  194.28,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "agent.run",
-                                          "duration_ms":  867.05,
-                                          "status":  2,
-                                          "exception":  true
+                                          "duration_ms":  219.45,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "POST /ask",
-                                          "duration_ms":  868.41,
-                                          "status":  2,
-                                          "exception":  false
+                                          "duration_ms":  220.95,
+                                          "exception":  false,
+                                          "status":  null
                                       }
                                   ],
-                        "error":  true
+                        "error":  false
                     },
                     {
-                        "trace_id":  "e54c6bd3a18e969401fe510c5ba6fefc",
+                        "trace_id":  "7962c6ee9bef81066c024c86364131bb",
                         "root":  "POST /ask",
-                        "duration_ms":  246.56,
+                        "duration_ms":  220.93,
                         "spans":  [
                                       {
                                           "name":  "agent.retrieve_context",
-                                          "duration_ms":  45.33,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  23.45,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "chat mock-llm-small",
-                                          "duration_ms":  164.86,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  195.62,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "agent.run",
-                                          "duration_ms":  210.38,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  219.28,
+                                          "exception":  false,
+                                          "status":  null
                                       },
                                       {
                                           "name":  "POST /ask",
-                                          "duration_ms":  246.56,
-                                          "status":  null,
-                                          "exception":  false
+                                          "duration_ms":  220.93,
+                                          "exception":  false,
+                                          "status":  null
+                                      }
+                                  ],
+                        "error":  false
+                    },
+                    {
+                        "trace_id":  "8129b000440a67bfc96bbd2121b5d362",
+                        "root":  "POST /ask",
+                        "duration_ms":  218.26,
+                        "spans":  [
+                                      {
+                                          "name":  "agent.retrieve_context",
+                                          "duration_ms":  24.33,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "chat mock-llm-small",
+                                          "duration_ms":  191.49,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "agent.run",
+                                          "duration_ms":  216.02,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "POST /ask",
+                                          "duration_ms":  218.26,
+                                          "exception":  false,
+                                          "status":  null
+                                      }
+                                  ],
+                        "error":  false
+                    },
+                    {
+                        "trace_id":  "5911138520bc6843463433e8e3ebbd2a",
+                        "root":  "POST /ask",
+                        "duration_ms":  216.97,
+                        "spans":  [
+                                      {
+                                          "name":  "agent.retrieve_context",
+                                          "duration_ms":  21.47,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "chat mock-llm-small",
+                                          "duration_ms":  193.54,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "agent.run",
+                                          "duration_ms":  215.21,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "POST /ask",
+                                          "duration_ms":  216.97,
+                                          "exception":  false,
+                                          "status":  null
+                                      }
+                                  ],
+                        "error":  false
+                    },
+                    {
+                        "trace_id":  "3e745fda2605663d2dbdbac5f5578adf",
+                        "root":  "POST /ask",
+                        "duration_ms":  215.25,
+                        "spans":  [
+                                      {
+                                          "name":  "agent.retrieve_context",
+                                          "duration_ms":  23.81,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "chat mock-llm-small",
+                                          "duration_ms":  189.63,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "agent.run",
+                                          "duration_ms":  213.62,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "POST /ask",
+                                          "duration_ms":  215.25,
+                                          "exception":  false,
+                                          "status":  null
+                                      }
+                                  ],
+                        "error":  false
+                    },
+                    {
+                        "trace_id":  "d8e8a0a94c9829328fc72a9a2e4095ae",
+                        "root":  "POST /ask",
+                        "duration_ms":  214.87,
+                        "spans":  [
+                                      {
+                                          "name":  "agent.retrieve_context",
+                                          "duration_ms":  19.34,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "chat mock-llm-small",
+                                          "duration_ms":  193.19,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "agent.run",
+                                          "duration_ms":  212.66,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "POST /ask",
+                                          "duration_ms":  214.87,
+                                          "exception":  false,
+                                          "status":  null
+                                      }
+                                  ],
+                        "error":  false
+                    },
+                    {
+                        "trace_id":  "b11749a46dfc596c70f9d1e443f73878",
+                        "root":  "POST /ask",
+                        "duration_ms":  214.68,
+                        "spans":  [
+                                      {
+                                          "name":  "agent.retrieve_context",
+                                          "duration_ms":  22.26,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "chat mock-llm-small",
+                                          "duration_ms":  190.3,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "agent.run",
+                                          "duration_ms":  212.97,
+                                          "exception":  false,
+                                          "status":  null
+                                      },
+                                      {
+                                          "name":  "POST /ask",
+                                          "duration_ms":  214.68,
+                                          "exception":  false,
+                                          "status":  null
                                       }
                                   ],
                         "error":  false
@@ -165,161 +325,321 @@
                 ],
     "errors":  [
                    {
-                       "trace_id":  "c39840761302fa0188c175f6e1f691be",
+                       "trace_id":  "2c0dc0977f1976a7c4c5ec9682fea8c6",
                        "root":  "POST /ask",
-                       "duration_ms":  118.49,
+                       "duration_ms":  89.91,
                        "spans":  [
                                      {
                                          "name":  "agent.retrieve_context",
-                                         "duration_ms":  16.17,
-                                         "status":  null,
-                                         "exception":  false
+                                         "duration_ms":  14.58,
+                                         "exception":  false,
+                                         "status":  null
                                      },
                                      {
                                          "name":  "chat mock-llm-small",
-                                         "duration_ms":  69.2,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  73.6,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "agent.run",
-                                         "duration_ms":  85.89,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  88.52,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "POST /ask",
-                                         "duration_ms":  118.49,
-                                         "status":  2,
-                                         "exception":  false
+                                         "duration_ms":  89.91,
+                                         "exception":  false,
+                                         "status":  2
                                      }
                                  ],
                        "error":  true
                    },
                    {
-                       "trace_id":  "528574154618d8f590b68dacb583036b",
+                       "trace_id":  "68a239609d354da4208d8281cbae4aa1",
                        "root":  "POST /ask",
-                       "duration_ms":  107.98,
+                       "duration_ms":  97.59,
                        "spans":  [
                                      {
                                          "name":  "agent.retrieve_context",
-                                         "duration_ms":  23.47,
-                                         "status":  null,
-                                         "exception":  false
+                                         "duration_ms":  19.58,
+                                         "exception":  false,
+                                         "status":  null
                                      },
                                      {
                                          "name":  "chat mock-llm-small",
-                                         "duration_ms":  82.63,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  76.01,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "agent.run",
-                                         "duration_ms":  106.48,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  95.95,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "POST /ask",
-                                         "duration_ms":  107.98,
-                                         "status":  2,
-                                         "exception":  false
+                                         "duration_ms":  97.59,
+                                         "exception":  false,
+                                         "status":  2
                                      }
                                  ],
                        "error":  true
                    },
                    {
-                       "trace_id":  "6ccb9114ce0a0b67038cca3d87bdf6ed",
+                       "trace_id":  "3b3c2f22f877b79f7878bfa75ac70816",
                        "root":  "POST /ask",
-                       "duration_ms":  106.54,
+                       "duration_ms":  102.16,
                        "spans":  [
                                      {
                                          "name":  "agent.retrieve_context",
-                                         "duration_ms":  24.45,
-                                         "status":  null,
-                                         "exception":  false
+                                         "duration_ms":  15.35,
+                                         "exception":  false,
+                                         "status":  null
                                      },
                                      {
                                          "name":  "chat mock-llm-small",
-                                         "duration_ms":  80.15,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  85.17,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "agent.run",
-                                         "duration_ms":  104.97,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  100.96,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "POST /ask",
-                                         "duration_ms":  106.54,
-                                         "status":  2,
-                                         "exception":  false
+                                         "duration_ms":  102.17,
+                                         "exception":  false,
+                                         "status":  2
                                      }
                                  ],
                        "error":  true
                    },
                    {
-                       "trace_id":  "2e84a25cbc3dae66713ca76ce7595133",
+                       "trace_id":  "23da891fe2a129aee393f9f05631d9ed",
                        "root":  "POST /ask",
-                       "duration_ms":  122.94,
+                       "duration_ms":  115.13,
                        "spans":  [
                                      {
                                          "name":  "agent.retrieve_context",
-                                         "duration_ms":  24.29,
-                                         "status":  null,
-                                         "exception":  false
+                                         "duration_ms":  21.29,
+                                         "exception":  false,
+                                         "status":  null
                                      },
                                      {
                                          "name":  "chat mock-llm-small",
-                                         "duration_ms":  96.4,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  91.83,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "agent.run",
-                                         "duration_ms":  121.77,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  113.43,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "POST /ask",
-                                         "duration_ms":  122.94,
-                                         "status":  2,
-                                         "exception":  false
+                                         "duration_ms":  115.13,
+                                         "exception":  false,
+                                         "status":  2
                                      }
                                  ],
                        "error":  true
                    },
                    {
-                       "trace_id":  "6234dd8962ae1e5588016f562cdc5f00",
+                       "trace_id":  "c8aa77215dba54bc30e235d1381b2977",
                        "root":  "POST /ask",
-                       "duration_ms":  121.02,
+                       "duration_ms":  97.86,
                        "spans":  [
                                      {
                                          "name":  "agent.retrieve_context",
-                                         "duration_ms":  22.23,
-                                         "status":  null,
-                                         "exception":  false
+                                         "duration_ms":  20.41,
+                                         "exception":  false,
+                                         "status":  null
                                      },
                                      {
                                          "name":  "chat mock-llm-small",
-                                         "duration_ms":  97.09,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  75.67,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "agent.run",
-                                         "duration_ms":  119.67,
-                                         "status":  2,
-                                         "exception":  true
+                                         "duration_ms":  96.46,
+                                         "exception":  true,
+                                         "status":  2
                                      },
                                      {
                                          "name":  "POST /ask",
-                                         "duration_ms":  121.02,
-                                         "status":  2,
-                                         "exception":  false
+                                         "duration_ms":  97.86,
+                                         "exception":  false,
+                                         "status":  2
+                                     }
+                                 ],
+                       "error":  true
+                   },
+                   {
+                       "trace_id":  "df3bc1da82bbc1339f0071c6ebde802e",
+                       "root":  "POST /ask",
+                       "duration_ms":  113.07,
+                       "spans":  [
+                                     {
+                                         "name":  "agent.retrieve_context",
+                                         "duration_ms":  17.27,
+                                         "exception":  false,
+                                         "status":  null
+                                     },
+                                     {
+                                         "name":  "chat mock-llm-small",
+                                         "duration_ms":  93.84,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "agent.run",
+                                         "duration_ms":  111.7,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "POST /ask",
+                                         "duration_ms":  113.07,
+                                         "exception":  false,
+                                         "status":  2
+                                     }
+                                 ],
+                       "error":  true
+                   },
+                   {
+                       "trace_id":  "22bde4bfcace1c0b21105c73082f1fcf",
+                       "root":  "POST /ask",
+                       "duration_ms":  116.9,
+                       "spans":  [
+                                     {
+                                         "name":  "agent.retrieve_context",
+                                         "duration_ms":  21.49,
+                                         "exception":  false,
+                                         "status":  null
+                                     },
+                                     {
+                                         "name":  "chat mock-llm-small",
+                                         "duration_ms":  93.29,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "agent.run",
+                                         "duration_ms":  115.19,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "POST /ask",
+                                         "duration_ms":  116.9,
+                                         "exception":  false,
+                                         "status":  2
+                                     }
+                                 ],
+                       "error":  true
+                   },
+                   {
+                       "trace_id":  "1d3cd7ffc07ca0bfdf709677f38ece82",
+                       "root":  "POST /ask",
+                       "duration_ms":  110.64,
+                       "spans":  [
+                                     {
+                                         "name":  "agent.retrieve_context",
+                                         "duration_ms":  25.53,
+                                         "exception":  false,
+                                         "status":  null
+                                     },
+                                     {
+                                         "name":  "chat mock-llm-small",
+                                         "duration_ms":  83.24,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "agent.run",
+                                         "duration_ms":  109.18,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "POST /ask",
+                                         "duration_ms":  110.64,
+                                         "exception":  false,
+                                         "status":  2
+                                     }
+                                 ],
+                       "error":  true
+                   },
+                   {
+                       "trace_id":  "7ce0bc849e50dd234145f34b7211ef5f",
+                       "root":  "POST /ask",
+                       "duration_ms":  96.94,
+                       "spans":  [
+                                     {
+                                         "name":  "agent.retrieve_context",
+                                         "duration_ms":  24.93,
+                                         "exception":  false,
+                                         "status":  null
+                                     },
+                                     {
+                                         "name":  "chat mock-llm-small",
+                                         "duration_ms":  69.95,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "agent.run",
+                                         "duration_ms":  95.26,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "POST /ask",
+                                         "duration_ms":  96.94,
+                                         "exception":  false,
+                                         "status":  2
+                                     }
+                                 ],
+                       "error":  true
+                   },
+                   {
+                       "trace_id":  "f630dd8bc3a3b7b3a235054416e4da0c",
+                       "root":  "POST /ask",
+                       "duration_ms":  111.57,
+                       "spans":  [
+                                     {
+                                         "name":  "agent.retrieve_context",
+                                         "duration_ms":  20.08,
+                                         "exception":  false,
+                                         "status":  null
+                                     },
+                                     {
+                                         "name":  "chat mock-llm-small",
+                                         "duration_ms":  89.03,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "agent.run",
+                                         "duration_ms":  109.48,
+                                         "exception":  true,
+                                         "status":  2
+                                     },
+                                     {
+                                         "name":  "POST /ask",
+                                         "duration_ms":  111.57,
+                                         "exception":  false,
+                                         "status":  2
                                      }
                                  ],
                        "error":  true

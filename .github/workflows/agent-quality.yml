@@ -1,0 +1,37 @@
+name: Agent quality gate
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  evaluate-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install develop agent dependencies
+        working-directory: 06-lab-complete/benchmark-observability/develop
+        run: python -m pip install -r requirements.txt
+      - name: Start v2 and enforce golden-set quality gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd 06-lab-complete/benchmark-observability/develop
+          nohup env AGENT_VERSION=v2 PORT=8002 python app.py >/tmp/day14-agent.log 2>&1 &
+          agent_pid=$!
+          trap 'kill "$agent_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8002/health >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8002/health >/dev/null
+          python eval/run_eval.py \
+            --url http://127.0.0.1:8002 \
+            --min-accuracy 1.0 \
+            --baseline "$GITHUB_WORKSPACE/reports/eval_v2.json" \
+            --out "$GITHUB_WORKSPACE/reports/eval_ci.json"

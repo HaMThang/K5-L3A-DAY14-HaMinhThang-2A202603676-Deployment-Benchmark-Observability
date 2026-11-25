@@ -1,47 +1,43 @@
 # Benchmark & Observability Report — Day 14
 
-**Tên:** Not supplied  
-**Ngày chạy:** 2026-11-25  
-**Môi trường:** Windows workspace with Docker Desktop/WSL2; local develop agent used Python 3.14.4, production observability stack used Docker Compose. Agent answers use the repository's mock LLM. The reproducible numeric outputs are under `reports/` and `benchmark-results/`.
+**Họ tên:** Chưa cung cấp
+**Ngày chạy:** 2026-11-25
+**Môi trường:** Windows với Docker Desktop/WSL2; Docker Compose project `k5-day14-observability`; agent dùng mock LLM. Các phép đo và snapshot được giữ trong `reports/` và `benchmark-results/`.
 
 ## 1. SLO của agent
 
-| SLI | SLO | Lý do chọn ngưỡng này |
+| SLI | SLO | Lý do |
 |---|---:|---|
-| p95 latency `/ask` | < 500 ms | Mục tiêu lab để phần lớn request trả lời trong nửa giây; các request tail chậm vẫn được theo dõi bằng p99/traces. |
-| Error rate `/ask` | < 2% | Cho phép lỗi mock ngẫu nhiên hiếm gặp nhưng phát hiện được sự cố upstream rõ rệt. |
-| Accuracy trên golden dataset | ≥ 80% | Quality gate được đặt trong `run_eval.py`; v1 được giữ làm baseline dù không đạt gate. |
+| p95 latency `/ask` | < 500 ms | Mục tiêu lab để phần lớn request trả lời dưới nửa giây; tail latency được theo dõi thêm qua p99 và trace. |
+| Error rate `/ask` | < 2% | Cho phép lỗi mock hiếm gặp nhưng vẫn phát hiện được lỗi tăng bất thường. |
+| Accuracy golden dataset | ≥ 80% | Quality gate tối thiểu để tránh deploy agent trả lời sai nhiều. |
 
 ## 2. Benchmark hiệu năng (develop, `load_test.py`)
 
-### 2.1 Concurrency vs latency (agent v2)
-
-Mỗi phép đo gửi 200 request; kết quả đầy đủ nằm trong các JSON được liên kết.
+### 2.1 Concurrency vs latency (agent v2, 300 request mỗi lượt)
 
 | Concurrency | RPS | p50 (ms) | p95 (ms) | p99 (ms) | Error rate | SLO |
 |---:|---:|---:|---:|---:|---:|---|
-| 1 | 3.90 | 192.6 | 224.1 | 1699.6 | 1.50% | PASS |
-| 10 | 40.88 | 189.3 | 221.3 | 1666.9 | 0.00% | PASS |
-| 50 | 83.58 | 198.9 | 255.5 | 1714.7 | 1.50% | PASS |
-| 100 | 79.84 | 329.6 | 969.7 | 1743.6 | 0.00% | FAIL (p95) |
+| 1 | 3.84 | 194.3 | 225.3 | 1699.3 | 1.67% | PASS |
+| 10 | 36.73 | 192.2 | 226.9 | 1692.3 | 1.33% | PASS |
+| 50 | 109.08 | 205.4 | 305.3 | 1707.4 | 1.00% | PASS |
+| 100 | 62.41 | 356.4 | 2739.2 | 3043.2 | 0.33% | FAIL (p95) |
 
-**Nhận xét:** Throughput tăng từ concurrency 1 tới 50 nhưng không tăng tuyến tính; ở 100 nó giảm nhẹ trong lần đo này. Độ trễ mock LLM và tail khoảng 1.7 giây chiếm phần lớn thời gian, nên tăng số client đồng thời không làm upstream xử lý nhanh hơn. Ở concurrency 100, p95 vượt SLO 500 ms dù không có lỗi HTTP.
+**Nhận xét:** throughput không tăng tuyến tính. Ở concurrency 50 có throughput cao nhất trong lượt đo; tại 100, queueing và tail latency làm RPS giảm và p95 vượt SLO. p99 quanh 1.7 giây ở các mức thấp hơn do mock LLM có một nhóm request chậm.
 
-Evidence: [load_v2_c1.json](reports/load_v2_c1.json), [load_v2_c10.json](reports/load_v2_c10.json), [load_v2_c50.json](reports/load_v2_c50.json), [load_v2_c100.json](reports/load_v2_c100.json).
+Evidence: [c1](reports/load_v2_c1.json), [c10](reports/load_v2_c10.json), [c50](reports/load_v2_c50.json), [c100](reports/load_v2_c100.json).
 
-### 2.2 Tail latency
+### 2.2 Tail latency (300 request mỗi lượt)
 
-Mỗi cấu hình có 200 request, concurrency 20. `MOCK_SLOW_RATE` là biến duy nhất được thay đổi.
+| `MOCK_SLOW_RATE` | avg (ms) | p95 (ms) | p99 (ms) | Error rate |
+|---:|---:|---:|---:|---:|
+| 0 | 190.2 | 217.6 | 221.4 | 0% |
+| 0.03 (mặc định) | 226.4 | 222.4 | 1678.0 | 0.67% |
+| 0.1 | 335.4 | 1695.9 | 1718.3 | 1.00% |
 
-| `MOCK_SLOW_RATE` | avg (ms) | p95 (ms) | p99 (ms) |
-|---:|---:|---:|---:|
-| 0 | 188.7 | 222.1 | 235.5 |
-| 0.03 (mặc định) | 243.0 | 221.4 | 1703.6 |
-| 0.1 | 332.0 | 1690.2 | 1705.5 |
+Ở rate 0.03, p99 nhạy với nhóm request chậm dù p95 còn thấp. Ở rate 0.1, p95 cũng tăng mạnh. Average có thể che khuất trải nghiệm của nhóm request chậm nên không đủ để đặt SLO.
 
-**Nhận xét:** p95/p99 nhạy với request chậm hơn average. Ở rate 0.03, p95 vẫn thấp nhưng p99 đã lên 1.7 giây; ở rate 0.1, p95 cũng vượt SLO. Average có thể che khuất nhóm request chậm mà người dùng vẫn trải nghiệm, vì vậy không nên đặt SLO chỉ theo average.
-
-Evidence: [tail_slow_0.json](reports/tail_slow_0.json), [tail_slow_003.json](reports/tail_slow_003.json), [tail_slow_01.json](reports/tail_slow_01.json).
+Evidence: [slow 0](reports/load_v2_slow_0.json), [slow 0.03](reports/load_v2_slow_0.03.json), [slow 0.1](reports/load_v2_slow_0.1.json).
 
 ## 3. Benchmark chất lượng (develop, `eval/run_eval.py`)
 
@@ -51,82 +47,69 @@ Evidence: [tail_slow_0.json](reports/tail_slow_0.json), [tail_slow_003.json](rep
 | Avg tokens / câu | 56.0 | 109.3 | 114.0 |
 | Tổng cost (USD) | $0.000389 | $0.000764 | $0.000793 |
 | Cost / câu đúng (USD) | $0.00038895 | $0.00003639 | $0.00003449 |
-| Quality gate (accuracy ≥80%, không regression) | FAIL | PASS | PASS |
+| Quality gate (≥80%) | FAIL | PASS | PASS |
 
-**Những câu v2 trả lời sai ban đầu và cách sửa:**
+Hai lỗi của v2 là `security-02` (JWT, claim `exp`/chữ ký) và `scaling-03` (CPU, memory, custom metrics cho HPA). Nội dung kiến thức tương ứng được bổ sung trong `develop/utils/mock_llm.py`. V2 dùng nhiều token hơn nhưng chi phí trên câu trả lời đúng thấp hơn nhờ accuracy tăng; KB sửa tăng tổng cost khoảng 3.8% so với v2 và đạt 23/23.
 
-| ID | Keyword bị thiếu | Đã sửa |
-|---|---|---|
-| `security-02` | `token`, hết hạn, chữ ký | Bổ sung mục JWT giải thích token có chữ ký, claim `exp`, và phân biệt với API key trong `develop/utils/mock_llm.py`. |
-| `scaling-03` | CPU, memory, custom metrics | Bổ sung mục Kubernetes HPA nêu CPU, memory, request/giây và queue length. |
-
-**Trade-off:** v2 dùng gần gấp đôi token và có tổng cost cao hơn v1 vì trả lời đúng nhiều câu hơn. Nhưng chi phí trên mỗi câu đúng giảm khoảng 10.7 lần so với v1. Bản KB sửa tăng cost tổng khoảng 3.8% so với v2, đổi lại accuracy tăng từ 91.3% lên 100%; p95 eval tăng nhẹ từ 216.4 lên 225.0 ms.
-
-Evidence: [eval_v1.json](reports/eval_v1.json), [eval_v2.json](reports/eval_v2.json), [eval_v2_fixed.json](reports/eval_v2_fixed.json).
+Evidence: [eval v1](reports/eval_v1.json), [eval v2](reports/eval_v2.json), [eval sau sửa KB](reports/eval_v2_fixed.json). Workflow [agent-quality.yml](.github/workflows/agent-quality.yml) chạy eval trong CI với `--min-accuracy 1.0` và baseline v2; exit code khác 0 làm job/PR thất bại, chặn merge.
 
 ## 4. Observability stack (production)
 
-Docker Compose stack đã chạy local; `/health` của agent trả HTTP 200. Có thể xem Grafana tại `http://localhost:3000`, Jaeger tại `http://localhost:16686`, Prometheus tại `http://localhost:9090` và Locust tại `http://localhost:8089` khi stack còn chạy.
+Stack Docker Compose chạy với project `k5-day14-observability`: agent, Nginx, Prometheus, Grafana, Jaeger và Locust. UI: Grafana `http://localhost:3000`, Prometheus `:9090`, Jaeger `:16686`, Locust `:8089`.
 
 ### 4.1 Screenshot và evidence
 
-- [ ] Dashboard Grafana khi đang có tải (Golden Signals): chưa có ảnh xác thực. Headless capture tạo ảnh trống nên đã loại khỏi repo.
-- [ ] Trace chậm trong Jaeger: dữ liệu trace thật đã lưu dạng JSON ở [jaeger_trace_summary.json](reports/jaeger_trace_summary.json); chưa có screenshot UI.
-- [ ] Trace lỗi trong Jaeger với exception: có trace thật và exception trong JSON summary; chưa có screenshot UI.
-- [ ] Trang Alerts Prometheus với alert firing: API snapshot từng ghi nhận alert cost `LLMCostBurnRateHigh` firing, nhưng trạng thái lần truy vấn sau là không có alert. Không có screenshot trang Alerts.
+- [x] [Grafana dashboard trong lúc có tải](screenshots/grafana-dashboard.png) — panel Traffic ghi nhận 17.9 req/s và Error rate chuyển đỏ.
+- [x] [Trace chậm trên Jaeger](screenshots/jaeger-slow-trace.png).
+- [x] [Trace lỗi trên Jaeger](screenshots/jaeger-error-trace.png), có lỗi upstream.
+- [x] [Prometheus Alerts có ít nhất hai alert firing](screenshots/prometheus-alert-firing.png) — ảnh cho thấy `LLMCostBurnRateHigh`, `AgentHighErrorRate`, `AgentInstanceDown` firing.
 
-Snapshot alert đã quan sát: `LLMCostBurnRateHigh`, severity `warning`, value `$2.456278/hour`, `activeAt=2026-11-25T10:32:32.571501534Z`. Đây là alert chi phí, không phải bằng chứng alert lỗi A firing. Snapshot API kế tiếp trả danh sách alert rỗng. Xem [prometheus_alerts_firing_observed.json](reports/prometheus_alerts_firing_observed.json) và [prometheus_alerts.json](reports/prometheus_alerts.json).
+Snapshot API tương ứng: [A+D alerts](reports/prometheus_alerts_cp8.json), [B alerts](reports/prometheus_alerts_B.json), [C alerts](reports/prometheus_alerts_C.json), [E alerts](reports/prometheus_alerts_E.json). Alert rule unit tests chạy bằng Docker `promtool test rules` và trả `SUCCESS`: [output](reports/promtool_test_rules.txt).
 
-### 4.2 Thí nghiệm “phá hệ thống”
+Tóm tắt cấu hình, trạng thái alert, kết quả Locust và các giới hạn quy kết dạng máy đọc được: [chaos_experiments.json](reports/chaos_experiments.json).
 
-| # | Thay đổi | Kết quả/alert thực tế | Thời gian tới firing | Panel phản ánh |
-|---|---|---|---|---|
-| A | `MOCK_ERROR_RATE=0.2` | Locust thu được 315 lỗi HTTP 503 trong 1,663 request `/ask` (18.94%). Không xác nhận được `AgentHighErrorRate` ở trạng thái firing; snapshot alert liên quan lỗi chưa được lưu khi injection đang chạy. | Chưa đo được | Chưa xác nhận |
-| B | `MOCK_SLOW_RATE=0.3` | Chưa chạy thử nghiệm alert production này. | Chưa đo | Chưa xác nhận |
-| C | `LLM_MODEL=mock-llm-large` | Chưa chạy thử nghiệm alert production này. | Chưa đo | Chưa xác nhận |
-| D | `docker pause` một instance | Chưa chạy | Chưa đo | Chưa xác nhận |
-| E | `AGENT_VERSION=v1` | Chưa chạy trong production stack | — | — |
+### 4.2 Thí nghiệm fault injection (CP8)
 
-Locust evidence cho A: [fault_error_stats.csv](benchmark-results/fault_error_stats.csv). Các phép Locust có lỗi trả exit code 1 vì nhận HTTP 503; đó là kết quả test, không phải lỗi khởi chạy Locust.
+| # | Thay đổi và kết quả Locust | Alert đã quan sát | Thời gian tới firing / ghi chú |
+|---|---|---|---|
+| A | `MOCK_ERROR_RATE=0.2`; lượt chạy ghép với D có 3,017 POST `/ask`, 649 lỗi (21.51%). | `AgentHighErrorRate` firing; snapshot ghi value 19.35% khi được lấy. | Rule `for: 1m`; Prometheus snapshot cho biết điều kiện bắt đầu pending tại 15:01:17Z, sau đó trạng thái firing đã xuất hiện trong ảnh Alerts. Lượt chạy ghép D nên failure tổng không thể quy riêng cho A. |
+| B | `MOCK_SLOW_RATE=0.3`; 2,638 POST `/ask`, 29 lỗi; p95/p99 1,700 ms. | `AgentHighLatencyP95` firing, value khoảng 1.918 s. | `activeAt=15:06:57Z`, rule `for: 2m`; snapshot firing được lấy sau ngưỡng này. |
+| C | `LLM_MODEL=mock-llm-large`; 1,875 POST `/ask`, 14 lỗi; median 440 ms, p95 510 ms, khoảng 15.71 req/s. | `LLMCostBurnRateHigh` firing, giá trị đo $16.05/giờ. | Alert đã có `activeAt=15:13:42Z`, sớm hơn lúc bắt đầu lượt C (15:17:47Z), nên lượt này xác nhận mức cost cao trong lúc dùng model large nhưng **không chứng minh riêng C đã kích hoạt alert**. |
+| D | Pause một agent trong lượt chạy ghép A+D; Nginx có request timeout đến 60 giây. | `AgentInstanceDown` firing cho instance `172.18.0.8:8000`. | Điều kiện pending bắt đầu 15:02:07Z; rule `for: 30s`; ảnh Alerts ghi nhận firing. Lượt ghép làm phát sinh cả 503/504 nên không tách được failure rate riêng cho D. |
+| E | `AGENT_VERSION=v1`, `MOCK_ERROR_RATE=0`, `MOCK_SLOW_RATE=0`; sau health check, 759 POST `/ask`, 0 lỗi, p95 190 ms. | Không có alert mới cho error, latency hoặc instance down. Alert cost từ lượt trước vẫn còn firing trong snapshot E. | Hạ tầng khỏe không phát hiện quality regression: eval v1 chỉ đúng 1/23 (4.35%), trong khi v2 đúng 21/23. Dùng golden-set eval/canary theo version để bắt lỗi loại này. |
 
-Thử nghiệm E nếu chạy cần được phát hiện bằng quality evaluation/canary so sánh accuracy và regression theo version; health/error/latency có thể vẫn bình thường nên chỉ dựa vào hạ tầng alert không đủ.
+CSV thực tế: [A+D](benchmark-results/chaos_A_D_stats.csv), [B](benchmark-results/chaos_B_stats.csv), [C](benchmark-results/chaos_C_stats.csv), [E sau warm-up](benchmark-results/chaos_E_clean_stats.csv). Lượt E thử đầu tiên bị 502 trong khoảng lúc recreate container; không dùng lượt đó làm kết luận chất lượng, thay bằng lượt clean có health check trước khi load.
 
 ### 4.3 Debug bằng trace
 
-Trace chậm nhất trong 100 trace trả về ở cửa sổ truy vấn `2026-11-25T10:20Z–10:45Z`:
+Trace chậm nhất trong tập 100 trace truy vấn từ Jaeger:
 
-- `trace_id`: `4dfaabb6c6d23580d8fa806d24df09f8`
-- Tổng thời gian: 1720.43 ms
-- Span lớn nhất: `chat mock-llm-small`, 1692.22 ms (~98.4% tổng thời gian)
-- Log JSON tương ứng:
+- `trace_id`: `a378833fd9a83526fc832472850b8b12`
+- Tổng thời gian: 1,717.12 ms.
+- Span lớn nhất: `chat mock-llm-small`, 1,691.09 ms (98.5% tổng thời gian).
+- Log JSON cùng `trace_id` nằm trong [trace_logs_cp8.json](reports/trace_logs_cp8.json); event `llm_call`, `llm_ms=1691.9`, request 1,718.5 ms, HTTP 200.
 
-```json
-{"ts":"2026-11-25T10:38:26.160098+00:00","level":"INFO","service":"observable-agent","instance":"479e3cd3d088","event":"llm_call","trace_id":"4dfaabb6c6d23580d8fa806d24df09f8","span_id":"edffe8ba8179dccc","request_id":"44dc84b91a5e","model":"mock-llm-small","agent_version":"v2","input_tokens":74,"output_tokens":37,"cost_usd":0.000033,"llm_ms":1692.4,"retrieved":true}
-```
-
-Trace lỗi có event `exception`: `c39840761302fa0188c175f6e1f691be`, tổng 118.49 ms; span `chat mock-llm-small` có exception và status code 2. Log cùng trace ghi `Upstream LLM error: 503 Service Unavailable (mock)`. Các trace/log đã truy vấn thật; JSON tóm tắt nằm tại [jaeger_trace_summary.json](reports/jaeger_trace_summary.json).
+Trace lỗi đã chụp: `2c0dc0977f1976a7c4c5ec9682fea8c6`; span `chat mock-llm-small` phát sinh exception do mock upstream trả 503. Log cùng trace và response 503 nằm trong [trace_logs_cp8.json](reports/trace_logs_cp8.json); chi tiết trace ở [jaeger_trace_summary.json](reports/jaeger_trace_summary.json).
 
 ## 5. Benchmark scaling (production, Locust headless, 100 users, 2 phút)
 
-Các số sau lấy từ CSV Locust; p95/p99 là phần trăm của hàng `/ask`, failure rate tính trên request `/ask`.
-
 | Số instance | RPS `/ask` | p50 (ms) | p95 (ms) | p99 (ms) | Failures `/ask` |
 |---:|---:|---:|---:|---:|---:|
-| 1 | 59.59 | 190 | 230 | 1700 | 74/7093 (1.04%) |
-| 3 | 60.02 | 190 | 220 | 1700 | 85/7136 (1.19%) |
+| 1 | 60.34 | 190 | 240 | 1700 | 79/7206 (1.10%) |
+| 3 | 60.16 | 190 | 220 | 1700 | 76/7184 (1.06%) |
 
-**Giải thích:** Scale từ 1 lên 3 instance chỉ cải thiện p95 khoảng 10 ms trong lần chạy này; RPS và p99 gần như không đổi. Với mock upstream có latency tail cố định khoảng 1.7 giây, nút thắt nằm ở upstream/độ trễ xử lý request hơn là số worker agent. Các lượt có một số lỗi mock 503, nên so sánh throughput giữa hai lượt cũng chịu ảnh hưởng của tính ngẫu nhiên.
+Tăng từ 1 lên 3 instance cải thiện p95 khoảng 20 ms trong lượt chạy này nhưng không tăng throughput; mock upstream và nhóm request tail quanh 1.7 giây là giới hạn chính. Các lỗi 503 phù hợp với `MOCK_ERROR_RATE=0.01` mặc định.
 
-Evidence: [scale_1_stats.csv](benchmark-results/scale_1_stats.csv), [scale_3_stats.csv](benchmark-results/scale_3_stats.csv).
+Evidence: [scale 1 CSV](benchmark-results/scale_1_stats.csv), [scale 3 CSV](benchmark-results/scale_3_stats.csv). Hai lệnh chạy bằng project đúng `k5-day14-observability` và tạo lần lượt 7,206/7,184 request `/ask`.
 
 ## 6. Kết luận
 
-1. Theo dõi p95/p99 giúp thấy tail latency mà average che khuất; concurrency 100 và `MOCK_SLOW_RATE=0.1` đã vi phạm SLO p95.
-2. Retrieval/KB cải thiện quality gate rõ rệt: eval tăng từ 21/23 lên 23/23 sau khi bổ sung thông tin JWT và HPA.
-3. Ba instance không giải quyết được latency tail do mock LLM; cần trace và metric theo dependency để tìm đúng bottleneck.
+1. p95/p99 cho thấy tail latency bị average che khuất; concurrency 100 và slow rate 0.1 vi phạm SLO p95.
+2. Retrieval/KB cải thiện accuracy từ 21/23 lên 23/23; cần quality gate bên cạnh health/latency/error alert.
+3. Ba instance chỉ cải thiện p95 nhẹ trong môi trường mock; trace chỉ ra mock LLM chiếm phần lớn thời gian request chậm.
 
-Nếu đưa agent lên production thật, nên bổ sung alert cho error budget burn, latency theo route/dependency, tỷ lệ timeout/retry, Redis health/latency, saturation CPU/memory, và canary accuracy/cost theo model/version.
+Khi triển khai thật, nên bổ sung alert cho error budget burn, dependency timeout/retry, Redis latency/availability, CPU/memory saturation và canary accuracy/cost theo version/model.
 
-## 7. Trạng thái triển khai và giới hạn evidence
+## 7. Deployment status
 
-Không có Railway/Render/Cloud Run public deployment trong phiên này; xem [DEPLOYMENT.md](DEPLOYMENT.md). Vì vậy không tồn tại URL public, dashboard deploy hay ảnh deployment thật. Các ảnh Grafana/Jaeger/Prometheus cũng chưa được chụp do công cụ capture UI trong môi trường này không khả dụng; report chỉ đính kèm số đo JSON/CSV và API evidence thực sự thu được.
+Không có Railway/Render/Cloud Run public deployment trong lần làm này, vì vậy không có URL hoặc ảnh dashboard deploy thật. [DEPLOYMENT.md](DEPLOYMENT.md) ghi trạng thái này và các bước/biến cần có khi triển khai; không sử dụng URL mẫu như thể đã deploy.

@@ -166,7 +166,7 @@ Trong thiết kế stateful, mỗi instance giữ history trong RAM riêng nên 
 
 ### Exercise 6.1–6.12: Checklist Deliverable
 
-Kết quả chép từ output thực tế của `python 06-lab-complete/check_production_ready.py` trên Windows; script checker được giữ nguyên. Docker image build được và có kích thước 183 MB. 40/40 kiểm tra con chạy được; SIGTERM trong lúc request đang chạy bị checker đánh dấu chưa kiểm tra được do Windows không hỗ trợ phép thử này. Docker stop vẫn đạt (exit code 0, 0.6 giây).
+Kết quả dưới đây là lượt chạy đầy đủ trong Ubuntu/WSL bằng Linux Python và Docker CLI; `check_production_ready.py` được giữ nguyên. Docker image build được, kích thước 183 MB. SIGTERM lúc đang có request được kiểm tra thật: request vẫn trả 200, process thoát exit code 0; `docker stop` cũng đạt trong 0.7 giây.
 
 - ✅ Dockerfile multi-stage, dưới 500 MB
 - ✅ Compose agent + Redis
@@ -178,18 +178,21 @@ Kết quả chép từ output thực tế của `python 06-lab-complete/check_pr
 - ✅ Cost guard
 - ✅ Config từ environment variables, không hard-code secret
 - ✅ Structured JSON logging
-- ⚠️ Graceful shutdown: SIGTERM đang xử lý request chưa được kiểm tra trên Windows; phép thử `docker stop` đạt
+- ✅ Graceful shutdown: SIGTERM giữ request đang chạy trả 200, process thoát exit code 0; Docker stop exit code 0 trong 0.7 giây
 - ✅ Railway config và health check path
 
-**Kết quả checker:** `11/12 tiêu chí đạt · 40/40 checks passed`; tiêu chí graceful shutdown còn ⚠️ do giới hạn phép thử SIGTERM trên Windows. Log đã loại secret: [check_production_ready_windows.txt](reports/check_production_ready_windows.txt).
+**Kết quả checker:** `12/12 tiêu chí đạt · 41/41 checks passed` — `PASS 12/12 — PRODUCTION READY!`. Output đầy đủ: [check_production_ready_wsl.txt](reports/check_production_ready_wsl.txt). Lượt chạy PowerShell trước đó là 11/12 vì checker bỏ qua SIGTERM trên Windows; dùng output WSL này làm bằng chứng đạt.
 
 ## Part 7: Benchmark & Observability
 
-### Exercise 7.1–7.5: Benchmark report và evidence
+### Exercise 7.1–7.7: Benchmark, observability và kết quả CP8
 
-- Report đã điền: [BENCHMARK_REPORT.md](BENCHMARK_REPORT.md)
-- Load test, evaluation và tail latency JSON: thư mục [`reports/`](reports/)
-- Locust scaling/fault CSV: thư mục [`benchmark-results/`](benchmark-results/)
-- Trace/alert API evidence: `reports/jaeger_trace_summary.json`, `reports/prometheus_alerts_firing_observed.json`, `reports/prometheus_alerts.json`
-- Ảnh dashboard/trace/alert UI: **Chưa chụp được ảnh hợp lệ; không tạo ảnh giả.**
-- Public service URL: **Chưa deploy; không có URL thực tế.** Chi tiết và lệnh test sau deploy: [DEPLOYMENT.md](DEPLOYMENT.md).
+- Báo cáo hoàn chỉnh: [BENCHMARK_REPORT.md](BENCHMARK_REPORT.md).
+- Load test concurrency và tail latency: 7 JSON thật trong [`reports/`](reports/) (300 request mỗi file).
+- Evaluation: `eval_v1.json` đạt 1/23, `eval_v2.json` đạt 21/23, `eval_v2_fixed.json` đạt 23/23. CI quality gate: [.github/workflows/agent-quality.yml](.github/workflows/agent-quality.yml); exit code khác 0 làm job thất bại và chặn merge. Alert rule unit tests: [`promtool_test_rules.txt`](reports/promtool_test_rules.txt) — `SUCCESS`.
+- Locust headless 100 users/2 phút với project `k5-day14-observability`: [`scale_1_stats.csv`](benchmark-results/scale_1_stats.csv), [`scale_3_stats.csv`](benchmark-results/scale_3_stats.csv). `/ask` đạt lần lượt 7,206 và 7,184 request.
+- Fault injection A–E có CSV, alert snapshots, thời gian và các giới hạn quy kết được ghi trong báo cáo. A/D được chạy cùng lượt nên lỗi của hai thay đổi không thể phân tách chính xác. Ở C, alert cost đã firing trước khi đổi model; snapshot ghi $16.05/giờ trong thời gian model large chạy. E chạy v1 healthy, 759 request không lỗi; snapshot còn alert cost cũ nhưng không xuất hiện alert mới về error/latency/down. Eval golden-set bắt regression v1.
+- Tóm tắt số liệu fault injection có cấu trúc: [`chaos_experiments.json`](reports/chaos_experiments.json).
+- Ảnh bằng chứng thật: [`grafana-dashboard.png`](screenshots/grafana-dashboard.png), [`jaeger-slow-trace.png`](screenshots/jaeger-slow-trace.png), [`jaeger-error-trace.png`](screenshots/jaeger-error-trace.png), [`prometheus-alert-firing.png`](screenshots/prometheus-alert-firing.png). Ảnh Prometheus cho thấy đồng thời 3 alert firing: cost, error rate, instance down.
+- Trace/log cùng ID: [`jaeger_trace_summary.json`](reports/jaeger_trace_summary.json) và [`trace_logs_cp8.json`](reports/trace_logs_cp8.json).
+- **Chưa deploy public** lên Railway/Render/Cloud Run nên không có URL public hoặc ảnh dashboard deploy. Không điền URL mẫu; trạng thái ghi trong [DEPLOYMENT.md](DEPLOYMENT.md).

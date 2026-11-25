@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-25",
+  "compose_project": "k5-day14-observability",
+  "experiments": {
+    "A_error_injection": {
+      "configuration": {"MOCK_ERROR_RATE": 0.2},
+      "combined_with": "D_instance_pause",
+      "locust_stats": "benchmark-results/chaos_A_D_stats.csv",
+      "ask_requests": 3017,
+      "ask_failures": 649,
+      "prometheus_snapshot": "reports/prometheus_alerts_cp8.json",
+      "alert": "AgentHighErrorRate",
+      "alert_state_observed": "firing",
+      "active_at_utc": "2026-11-25T15:01:17.401817116Z",
+      "rule_for": "1m",
+      "note": "Combined A+D run; failures cannot be attributed to A alone."
+    },
+    "B_slow_injection": {
+      "configuration": {"MOCK_SLOW_RATE": 0.3},
+      "locust_stats": "benchmark-results/chaos_B_stats.csv",
+      "ask_requests": 2638,
+      "ask_failures": 29,
+      "p95_ms": 1700,
+      "prometheus_snapshot": "reports/prometheus_alerts_B.json",
+      "alert": "AgentHighLatencyP95",
+      "alert_state_observed": "firing",
+      "active_at_utc": "2026-11-25T15:06:57.401817116Z",
+      "rule_for": "2m",
+      "value_seconds": 1.9183722312650624
+    },
+    "C_large_model": {
+      "configuration": {"LLM_MODEL": "mock-llm-large"},
+      "locust_stats": "benchmark-results/chaos_C_stats.csv",
+      "ask_requests": 1875,
+      "ask_failures": 14,
+      "p95_ms": 510,
+      "prometheus_snapshot": "reports/prometheus_alerts_C.json",
+      "alert": "LLMCostBurnRateHigh",
+      "alert_state_observed": "firing",
+      "active_at_utc": "2026-11-25T15:13:42.571501534Z",
+      "value_usd_per_hour": 16.050127311209003,
+      "note": "Alert activeAt preceded this C run; this run does not prove C alone triggered it."
+    },
+    "D_pause_instance": {
+      "combined_with": "A_error_injection",
+      "locust_stats": "benchmark-results/chaos_A_D_stats.csv",
+      "alert_snapshot": "reports/prometheus_alerts_cp8.json",
+      "alert": "AgentInstanceDown",
+      "alert_state_observed": "firing",
+      "instance": "172.18.0.8:8000",
+      "active_at_utc": "2026-11-25T15:02:07.401817116Z",
+      "rule_for": "30s"
+    },
+    "E_quality_regression": {
+      "configuration": {"AGENT_VERSION": "v1", "MOCK_ERROR_RATE": 0, "MOCK_SLOW_RATE": 0},
+      "health_response": {"status": "ok", "agent_version": "v1"},
+      "locust_stats": "benchmark-results/chaos_E_clean_stats.csv",
+      "ask_requests": 759,
+      "ask_failures": 0,
+      "p95_ms": 190,
+      "eval_correct": 1,
+      "eval_total": 23,
+      "eval_accuracy": 0.0435,
+      "prometheus_snapshot": "reports/prometheus_alerts_E.json",
+      "note": "No new infrastructure alert; a pre-existing LLMCostBurnRateHigh remained firing."
+    }
+  },
+  "promtool": {"command": "promtool test rules /p/alert_rules_test.yml", "result": "SUCCESS"}
+}

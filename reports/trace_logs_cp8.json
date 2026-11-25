@@ -1,0 +1,22 @@
+{
+  "slow_trace": {
+    "trace_id": "a378833fd9a83526fc832472850b8b12",
+    "timestamp": "2026-11-25T15:03:59.477643+00:00",
+    "event": "llm_call",
+    "service": "observable-agent",
+    "model": "mock-llm-small",
+    "agent_version": "v2",
+    "llm_ms": 1691.9,
+    "request_ms": 1718.5,
+    "status": 200
+  },
+  "error_trace": {
+    "trace_id": "2c0dc0977f1976a7c4c5ec9682fea8c6",
+    "timestamp": "2026-11-25T15:03:59.498331+00:00",
+    "event": "llm_error",
+    "service": "observable-agent",
+    "error": "Upstream LLM error: 503 Service Unavailable (mock)",
+    "request_ms": 89.5,
+    "status": 503
+  }
+}
